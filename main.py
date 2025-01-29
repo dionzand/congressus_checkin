@@ -33,8 +33,9 @@ def get_participants():
     participants = []
     page = 1
     while True:
+        params = {"status": "approved"}
         url = f"{BASE_URL}/events/{EVENT_ID}/participations?page={page}"
-        response = requests.get(url, headers=HEADERS)
+        response = requests.get(url, params=params, headers=HEADERS)
         if response.status_code == 200:
             data = response.json()
             participants.extend(data.get("data", []))  # Extract participants list from "data" key
