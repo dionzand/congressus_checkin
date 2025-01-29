@@ -30,14 +30,21 @@ if not st.session_state["authenticated"]:
 
 
 def get_participants():
-    url = f"{BASE_URL}/events/{EVENT_ID}/participations"
-    response = requests.get(url, headers=HEADERS)
-    if response.status_code == 200:
-        data = response.json()
-        return data.get("data", [])  # Ensure we extract the list of participants
-    else:
-        st.error(f"Error fetching participants: {response.text}")
-        return []
+    participants = []
+    page = 1
+    while True:
+        url = f"{BASE_URL}/events/{EVENT_ID}/participations?page={page}"
+        response = requests.get(url, headers=HEADERS)
+        if response.status_code == 200:
+            data = response.json()
+            participants.extend(data.get("data", []))  # Extract participants list from "data" key
+            if not data.get("has_next", False):
+                break  # Stop if there's no next page
+            page += 1
+        else:
+            st.error(f"Error fetching participants: {response.text}")
+            break
+    return participants
 
 
 def list_addressees(participants):
@@ -55,7 +62,7 @@ def set_presence(participant_id):
     url = f"{BASE_URL}/events/{EVENT_ID}/participations/{participant_id}/set-presence"
     payload = {"status_presence": "present"}
     response = requests.post(url, headers=HEADERS, json=payload)
-    if response.status_code == 200:
+    if response.status_code == 204:
         st.success(f"Successfully marked participant {participant_id} as present.")
     else:
         st.error(f"Error setting presence: {response.text}")
