@@ -33,19 +33,20 @@ def get_participants():
     url = f"{BASE_URL}/events/{EVENT_ID}/participations"
     response = requests.get(url, headers=HEADERS)
     if response.status_code == 200:
-        return response.json()
+        data = response.json()
+        return data.get("participations", [])  # Ensure we extract the list of participants
     else:
         st.error(f"Error fetching participants: {response.text}")
-        return None
+        return []
 
 
 def list_addressees(participants):
-    return [(p["id"], p["addressee"]) for p in participants]
+    return [(p.get("id"), p.get("addressee", "Unknown")) for p in participants]
 
 
 def find_participant_by_addressee(participants, search_name):
     for p in participants:
-        if p["addressee"].lower() == search_name.lower():
+        if p.get("addressee", "").lower() == search_name.lower():
             return p
     return None
 
