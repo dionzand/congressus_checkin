@@ -1,9 +1,10 @@
 import requests
 import streamlit as st
 import pandas as pd
+import os
 
 # Constants
-API_KEY = "YOUR_API_KEY"
+API_KEY = os.getenv("API_KEY")
 EVENT_ID = "108406"
 BASE_URL = "https://api.congressus.nl/v30"
 HEADERS = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
