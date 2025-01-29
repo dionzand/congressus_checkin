@@ -70,14 +70,14 @@ def set_presence(participant_id):
 
 
 def get_member_status(member_id):
-    url = f"{BASE_URL}/member-statuses/{member_id}"
+    url = f"{BASE_URL}/members/{member_id}/statuses"
     response = requests.get(url, headers=HEADERS)
     if response.status_code == 200:
-        data = response.json()
-        member_status = data.get("name", "")
+        data = response.json().get("data", "")
+        member_statuses = [p["name"] for p in data if not p["archived"]]
     else:
-        member_status = ""
-    return member_status
+        member_statuses = ""
+    return "".join(member_statuses)
 
 
 st.title("Congressus Event Participation Manager")
