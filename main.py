@@ -16,7 +16,7 @@ if "authenticated" not in st.session_state:
 
 
 def authenticate():
-    password_input = st.text_input("Enter Password:", type="password")
+    password_input = st.text_input("Voer het wachtwoord in:", type="password")
     if st.button("Login"):
         if password_input == PASSWORD:
             st.session_state["authenticated"] = True
@@ -43,7 +43,7 @@ def get_participants():
                 break  # Stop if there's no next page
             page += 1
         else:
-            st.error(f"Error fetching participants: {response.text}")
+            st.error(f"Error bij het zoeken van deelnemer: {response.text}")
             break
     return participants
 
@@ -64,9 +64,9 @@ def set_presence(participant_id):
     payload = {"status_presence": "present"}
     response = requests.post(url, headers=HEADERS, json=payload)
     if response.status_code == 204:
-        st.success(f"Successfully marked participant {participant_id} as present.")
+        st.success(f"Deelnemer {participant_id} geregistreerd als aanwezig!")
     else:
-        st.error(f"Error setting presence: {response.text}")
+        st.error(f"Kan aanwezigheid niet registreren voor: {response.text}")
 
 
 def get_member_status(member_id):
@@ -80,23 +80,24 @@ def get_member_status(member_id):
     return "".join(member_statuses)
 
 
-st.title("Congressus Event Participation Manager")
+st.title("Domibo januari 2025 aanwezigheid")
 
 participants = get_participants()
 if participants:
     addressees = list_addressees(participants)
     df = pd.DataFrame(addressees, columns=["ID", "Addressee"])
-    st.subheader("Participants")
-    st.dataframe(df)
 
-    search_name = st.selectbox("Select addressee to mark as present:", df["Addressee"].tolist())
+    search_name = st.selectbox("Selecteer een deelnemer:", df["Addressee"].tolist())
     participant = find_participant_by_addressee(participants, search_name)
     if participant:
         member_status = get_member_status(participant["member_id"])
-        st.write(f"Member status: {member_status}")
-    if st.button("Set Presence"):
+        st.write(f"Lidmaatschap status: {member_status}")
+    if st.button("Zet deze deelnemer op aanwezig"):
         participant = find_participant_by_addressee(participants, search_name)
         if participant:
             set_presence(participant["id"])
         else:
-            st.warning("Participant not found.")
+            st.warning("Deelnemer niet gevonden.")
+    
+    st.subheader("Deelnemers")
+    st.dataframe(df)
