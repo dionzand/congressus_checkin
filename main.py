@@ -68,6 +68,17 @@ def set_presence(participant_id):
         st.error(f"Error setting presence: {response.text}")
 
 
+def get_member_status(member_id):
+    url = f"{BASE_URL}/member-statuses/{member_id}"
+    response = requests.get(url, headers=HEADERS)
+    if response.status_code == 200:
+        data = response.json()
+        member_status = data.get("name", "")
+    else:
+        member_status = ""
+    return member_status
+
+
 st.title("Congressus Event Participation Manager")
 
 participants = get_participants()
@@ -78,6 +89,10 @@ if participants:
     st.dataframe(df)
 
     search_name = st.selectbox("Select addressee to mark as present:", df["Addressee"].tolist())
+    participant = find_participant_by_addressee(participants, search_name)
+    if participant:
+        member_status = get_member_status(participant["member_id"])
+        st.write(f"Member status: {member_status}")
     if st.button("Set Presence"):
         participant = find_participant_by_addressee(participants, search_name)
         if participant:
