@@ -34,7 +34,7 @@ def get_participants():
     response = requests.get(url, headers=HEADERS)
     if response.status_code == 200:
         data = response.json()
-        return data.get("participations", [])  # Ensure we extract the list of participants
+        return data.get("data", [])  # Ensure we extract the list of participants
     else:
         st.error(f"Error fetching participants: {response.text}")
         return []
