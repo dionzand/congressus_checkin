@@ -11,7 +11,7 @@ BASE_URL = "https://api.congressus.nl/v30"
 HEADERS = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
 
 authenticator = stauth.Authenticate(
-    dict(st.secrets['credentials']),
+    st.secrets['credentials'].to_dict(),
     st.secrets['cookie']['name'],
     st.secrets['cookie']['key'],
     st.secrets['cookie']['expiry_days']
@@ -99,8 +99,6 @@ except Exception as e:
 
 # Process login results
 if st.session_state["authentication_status"]:
-    authenticator.logout()
-
     participants = get_participants()
     if participants:
         addressees = list_addressees(participants)
