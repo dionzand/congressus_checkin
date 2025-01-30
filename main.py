@@ -91,11 +91,14 @@ def get_member_status(member_id):
 
 st.title("Domibo januari 2025 aanwezigheid")
 # Render the login widget
-name, authentication_status, username = authenticator.login('Login', 'main')
+try:
+    authenticator.login()
+except Exception as e:
+    st.error(e)
 
 # Process login results
 if st.session_state["authentication_status"]:
-    authenticator.logout('Logout', 'main')
+    authenticator.logout()
     st.title("Congressus Event Participation Manager")
 
 participants = get_participants()
