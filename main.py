@@ -90,6 +90,7 @@ def get_member_status(member_id):
 
 
 st.title("Domibo januari 2025 aanwezigheid")
+
 # Render the login widget
 try:
     authenticator.login()
@@ -99,23 +100,22 @@ except Exception as e:
 # Process login results
 if st.session_state["authentication_status"]:
     authenticator.logout()
-    st.title("Congressus Event Participation Manager")
 
-participants = get_participants()
-if participants:
-    addressees = list_addressees(participants)
-    df = pd.DataFrame(addressees, columns=["ID", "Addressee"])
+    participants = get_participants()
+    if participants:
+        addressees = list_addressees(participants)
+        df = pd.DataFrame(addressees, columns=["ID", "Addressee"])
 
-    search_name = st.selectbox("Selecteer een deelnemer:", df["Addressee"].tolist())
-    participant = find_participant_by_addressee(participants, search_name)
-    if participant:
-        member_status = get_member_status(participant["member_id"])
-        st.write(f"Lidmaatschap status: {member_status}")
-        if st.button("Zet deze deelnemer op aanwezig"):
-            set_presence(participant["id"])
+        search_name = st.selectbox("Selecteer een deelnemer:", df["Addressee"].tolist())
+        participant = find_participant_by_addressee(participants, search_name)
+        if participant:
+            member_status = get_member_status(participant["member_id"])
+            st.write(f"Lidmaatschap status: {member_status}")
+            if st.button("Zet deze deelnemer op aanwezig"):
+                set_presence(participant["id"])
 
-    st.subheader("Deelnemers")
-    st.dataframe(df)
+        st.subheader("Deelnemers")
+        st.dataframe(df)
 
 elif st.session_state["authentication_status"] == False:
     st.error('Username/password is incorrect')
