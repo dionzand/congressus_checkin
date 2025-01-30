@@ -2,6 +2,7 @@ import requests
 import streamlit as st
 import pandas as pd
 import os
+import streamlit_authenticator as stauth
 
 # Constants
 API_KEY = os.getenv("API_KEY")
@@ -9,24 +10,32 @@ EVENT_ID = "108406"
 BASE_URL = "https://api.congressus.nl/v30"
 HEADERS = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
 
+authenticator = stauth.Authenticate(
+    dict(st.secrets['credentials']),
+    st.secrets['cookie']['name'],
+    st.secrets['cookie']['key'],
+    st.secrets['cookie']['expiry_days']
+)
+
+
 # Authentication
-PASSWORD = os.getenv("PASSWORD")
-if "authenticated" not in st.session_state:
-    st.session_state["authenticated"] = False
+# PASSWORD = os.getenv("PASSWORD")
+# if "authenticated" not in st.session_state:
+#     st.session_state["authenticated"] = False
 
 
-def authenticate():
-    password_input = st.text_input("Voer het wachtwoord in:", type="password")
-    if st.button("Login"):
-        if password_input == PASSWORD:
-            st.session_state["authenticated"] = True
-        else:
-            st.error("Incorrect password. Try again.")
-
-
-if not st.session_state["authenticated"]:
-    authenticate()
-    st.stop()
+# def authenticate():
+#     password_input = st.text_input("Enter Password:", type="password")
+#     if st.button("Login"):
+#         if password_input == PASSWORD:
+#             st.session_state["authenticated"] = True
+#         else:
+#             st.error("Incorrect password. Try again.")
+#
+#
+# if not st.session_state["authenticated"]:
+#     authenticate()
+#     st.stop()
 
 
 def get_participants():
@@ -81,6 +90,13 @@ def get_member_status(member_id):
 
 
 st.title("Domibo januari 2025 aanwezigheid")
+# Render the login widget
+name, authentication_status, username = authenticator.login('Login', 'main')
+
+# Process login results
+if st.session_state["authentication_status"]:
+    authenticator.logout('Logout', 'main')
+    st.title("Congressus Event Participation Manager")
 
 participants = get_participants()
 if participants:
@@ -92,12 +108,13 @@ if participants:
     if participant:
         member_status = get_member_status(participant["member_id"])
         st.write(f"Lidmaatschap status: {member_status}")
-    if st.button("Zet deze deelnemer op aanwezig"):
-        participant = find_participant_by_addressee(participants, search_name)
-        if participant:
+        if st.button("Zet deze deelnemer op aanwezig"):
             set_presence(participant["id"])
-        else:
-            st.warning("Deelnemer niet gevonden.")
-    
+
     st.subheader("Deelnemers")
     st.dataframe(df)
+
+elif st.session_state["authentication_status"] == False:
+    st.error('Username/password is incorrect')
+elif st.session_state["authentication_status"] == None:
+    st.warning('Please enter your username and password')
