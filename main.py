@@ -89,7 +89,7 @@ def get_member_status(member_id):
     return "".join(member_statuses)
 
 
-st.title("Domibo januari 2025 aanwezigheid")
+st.title("Regionaal event 20-02-2025 aanwezigheid")
 
 # Render the login widget
 try:
