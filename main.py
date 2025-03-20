@@ -22,7 +22,7 @@ def get_participants():
     page = 1
     while True:
         params = {"status": "approved"}
-        url = f"{BASE_URL}/events/{EVENT_ID}/participations?page={page}"
+        url = f"{BASE_URL}/events/{st.session_state["event_id"]}/participations?page={page}"
         response = requests.get(url, params=params, headers=HEADERS)
         if response.status_code == 200:
             data = response.json()
@@ -48,7 +48,7 @@ def find_participant_by_addressee(participants, search_name):
 
 
 def set_presence(participant_id):
-    url = f"{BASE_URL}/events/{EVENT_ID}/participations/{participant_id}/set-presence"
+    url = f"{BASE_URL}/events/{st.session_state["event_id"]}/participations/{participant_id}/set-presence"
     payload = {"status_presence": "present"}
     response = requests.post(url, headers=HEADERS, json=payload)
     if response.status_code == 204:
@@ -78,11 +78,12 @@ except Exception as e:
 
 # Process login results
 if st.session_state["authentication_status"]:
-    event_id = st.text_input("Event ID")
-    if st.button("Zoek event"):
-        global EVENT_ID
-        EVENT_ID = event_id
+    if "event_id" not in st.session_state:
+        event_id = st.text_input("Event ID")
+        if st.button("Zoek event"):
+            st.session_state["event_id"] = event_id
 
+    if "event_id" in st.session_state:
         participants = get_participants()
         if participants:
             addressees = list_addressees(participants)
