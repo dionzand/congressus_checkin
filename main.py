@@ -22,7 +22,7 @@ def get_participants():
     page = 1
     while True:
         params = {"status": "approved"}
-        url = f"{BASE_URL}/events/{st.session_state["event_id"]}/participations?page={page}"
+        url = f"{BASE_URL}/events/{st.session_state['event_id']}/participations?page={page}"
         response = requests.get(url, params=params, headers=HEADERS)
         if response.status_code == 200:
             data = response.json()
@@ -48,7 +48,7 @@ def find_participant_by_addressee(participants, search_name):
 
 
 def set_presence(participant_id):
-    url = f"{BASE_URL}/events/{st.session_state["event_id"]}/participations/{participant_id}/set-presence"
+    url = f"{BASE_URL}/events/{st.session_state['event_id']}/participations/{participant_id}/set-presence"
     payload = {"status_presence": "present"}
     response = requests.post(url, headers=HEADERS, json=payload)
     if response.status_code == 204:
