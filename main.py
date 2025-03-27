@@ -23,7 +23,7 @@ def get_participants():
     page = 1
     while True:
         params = {"status": "approved"}
-        url = f"{BASE_URL}/events/{EVENT_ID}/participations?page={page}"
+        url = f"{BASE_URL}/events/{st.session_state['event_id']}/participations?page={page}"
         response = requests.get(url, params=params, headers=HEADERS)
         if response.status_code == 200:
             data = response.json()
@@ -49,7 +49,7 @@ def find_participant_by_addressee(participants, search_name):
 
 
 def set_presence(participant_id):
-    url = f"{BASE_URL}/events/{EVENT_ID}/participations/{participant_id}/set-presence"
+    url = f"{BASE_URL}/events/{st.session_state['event_id']}/participations/{participant_id}/set-presence"
     payload = {"status_presence": "present"}
     response = requests.post(url, headers=HEADERS, json=payload)
     if response.status_code == 204:
@@ -69,7 +69,7 @@ def get_member_status(member_id):
     return "".join(member_statuses)
 
 
-st.title("Domibo 27-02-2025 aanwezigheid")
+st.title("Congressus aanwezigheid")
 
 # Render the login widget
 try:
@@ -79,21 +79,27 @@ except Exception as e:
 
 # Process login results
 if st.session_state["authentication_status"]:
-    participants = get_participants()
-    if participants:
-        addressees = list_addressees(participants)
-        df = pd.DataFrame(addressees, columns=["ID", "Addressee"])
+    if "event_id" not in st.session_state:
+        event_id = st.text_input("Event ID")
+        if st.button("Zoek event"):
+            st.session_state["event_id"] = event_id
 
-        search_name = st.selectbox("Selecteer een deelnemer:", df["Addressee"].tolist())
-        participant = find_participant_by_addressee(participants, search_name)
-        if participant:
-            member_status = get_member_status(participant["member_id"])
-            st.write(f"Lidmaatschap status: {member_status}")
-            if st.button("Zet deze deelnemer op aanwezig"):
-                set_presence(participant["id"])
+    if "event_id" in st.session_state:
+        participants = get_participants()
+        if participants:
+            addressees = list_addressees(participants)
+            df = pd.DataFrame(addressees, columns=["ID", "Addressee"])
 
-        st.subheader("Deelnemers")
-        st.dataframe(df)
+            search_name = st.selectbox("Selecteer een deelnemer:", df["Addressee"].tolist())
+            participant = find_participant_by_addressee(participants, search_name)
+            if participant:
+                member_status = get_member_status(participant["member_id"])
+                st.write(f"Lidmaatschap status: {member_status}")
+                if st.button("Zet deze deelnemer op aanwezig"):
+                    set_presence(participant["id"])
+
+            st.subheader("Deelnemers")
+            st.dataframe(df)
 
 elif st.session_state["authentication_status"] == False:
     st.error('Username/password is incorrect')
