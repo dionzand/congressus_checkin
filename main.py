@@ -6,7 +6,7 @@ import streamlit_authenticator as stauth
 
 # Constants
 API_KEY = os.getenv("API_KEY")
-EVENT_ID = "109233"
+EVENT_ID = "112300"
 BASE_URL = "https://api.congressus.nl/v30"
 HEADERS = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
 
@@ -16,26 +16,6 @@ authenticator = stauth.Authenticate(
     st.secrets['cookie']['key'],
     st.secrets['cookie']['expiry_days']
 )
-
-
-# Authentication
-# PASSWORD = os.getenv("PASSWORD")
-# if "authenticated" not in st.session_state:
-#     st.session_state["authenticated"] = False
-
-
-# def authenticate():
-#     password_input = st.text_input("Enter Password:", type="password")
-#     if st.button("Login"):
-#         if password_input == PASSWORD:
-#             st.session_state["authenticated"] = True
-#         else:
-#             st.error("Incorrect password. Try again.")
-#
-#
-# if not st.session_state["authenticated"]:
-#     authenticate()
-#     st.stop()
 
 
 def get_participants():
