@@ -6,7 +6,7 @@ import streamlit_authenticator as stauth
 
 # Constants
 API_KEY = os.getenv("API_KEY")
-EVENT_ID = "112300"
+EVENT_ID = "113006"
 BASE_URL = "https://api.congressus.nl/v30"
 HEADERS = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
 
