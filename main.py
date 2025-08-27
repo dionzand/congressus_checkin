@@ -6,7 +6,7 @@ import streamlit_authenticator as stauth
 
 # Constants
 API_KEY = os.getenv("API_KEY")
-EVENT_ID = "109231"
+EVENT_ID = "113761"
 BASE_URL = "https://api.congressus.nl/v30"
 HEADERS = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
 
@@ -69,7 +69,7 @@ def get_member_status(member_id):
     return "".join(member_statuses)
 
 
-st.title("Domibo 22-05-2025")
+st.title("Domibo 28-08-2025")
 
 # Render the login widget
 try:
